@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\API_Capacitacion.Model\API_Capacitacion.Model.csproj" />
+  </ItemGroup>
+
 </Project>
