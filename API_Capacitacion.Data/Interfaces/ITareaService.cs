@@ -1,15 +1,15 @@
 ﻿using API_Capacitacion.DTO.Tarea;
 using API_Capacitacion.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace API_Capacitacion.Data.Interfaces
 {
     public interface ITareaService
     {
         public Task<TareaModel?> Create(CreateTareaDTO createTareaDTO);
+        public Task<IEnumerable<TareaModel?>> FindAll();
+        public Task<TareaModel?> FindOne(int tareaId);
+        public Task<TareaModel?> Update(int tareaId, UpdateTareaDTO updateTareaDto);
+        public Task<TareaModel?> Remove(int tareaId);
     }
 }

@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 PostgresqlConfiguration postgresqlConfiguration = new (Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "");
 builder.Services.AddSingleton(postgresqlConfiguration);
 builder.Services.AddScoped<ITareaService, TareaService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

@@ -34,6 +34,7 @@ namespace API_Capacitacion.Data.Services
                     descripcion = createTareaDTO.Descripcion,
                     userID = createTareaDTO.IdUsuario
                     },
+
                     map: (tarea,user) => {
                         tarea.Usuario = user;
                         return tarea;
@@ -47,6 +48,117 @@ namespace API_Capacitacion.Data.Services
             {
                 return null;
             }
+        }
+
+        public async Task<IEnumerable<TareaModel?>> FindAll()
+        {
+            using NpgsqlConnection dataBase = CreateConnection();
+            string sqlQuery = "SELECT * FROM view_tarea;";
+            try
+            {                  
+                await dataBase.OpenAsync();
+                IEnumerable<TareaModel> listaTarea = await dataBase.QueryAsync<TareaModel, UserModel, TareaModel>(
+                    sqlQuery,
+                    map: (tarea, user) => {
+                        tarea.Usuario = user;
+                        return tarea;
+                    },
+                    splitOn: "usuarioId");
+                await dataBase.CloseAsync();
+                return listaTarea;
+
+            }
+            catch (Exception ex)
+            {
+                return [];
+            }
+        }
+
+        public async Task<TareaModel?> FindOne(int userId)
+        {
+            using NpgsqlConnection dataBase = CreateConnection();
+            string sqlQuery = "SELECT * FROM view_tarea WHERE idtarea = @idTask;";
+            try
+            {
+                await dataBase.OpenAsync();
+                var tarea = await dataBase.QueryAsync<TareaModel, UserModel, TareaModel>(
+                    sqlQuery,
+                    param: new {
+                    idTask = userId},
+                    map: (tarea, user) => {
+                        tarea.Usuario = user;
+                        return tarea;
+                    },
+                    splitOn: "usuarioId");
+                await dataBase.CloseAsync();
+                return tarea.FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<TareaModel?> Update(int tareaId, UpdateTareaDTO updateTareaDto)
+        {
+            using NpgsqlConnection dataBase = CreateConnection();
+            string sqlQuery = "SELECT * FROM fun_task_update(" +
+                "p_idtarea:= @idTask," +
+                "p_tarea := @task," +
+                "p_descripcion := @description);";
+            try
+            {
+                await dataBase.OpenAsync();
+                IEnumerable<TareaModel> result = await dataBase.QueryAsync<TareaModel, UserModel, TareaModel>(
+                    sqlQuery, param: new
+                    {
+                        idTask = tareaId,
+                        task = updateTareaDto.Tarea,
+                        description = updateTareaDto.Descripcion
+                    },
+                    map: (tarea, user) => {
+                        tarea.Usuario = user;
+                        return tarea;
+                    },
+                    splitOn: "usuarioId"
+                    );
+                await dataBase.CloseAsync();
+                return result.FirstOrDefault();
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<TareaModel?> Remove(int userId)
+        {
+            using NpgsqlConnection dataBase = CreateConnection();
+            string sqlQuery = "SELECT * FROM fun_task_remove(p_idTarea := @idTask);";
+            try
+            {
+                await dataBase.OpenAsync();
+                var tarea = await dataBase.QueryAsync<TareaModel, UserModel, TareaModel>(
+                    sqlQuery,
+                    param: new
+                    {
+                        idTask = userId                       
+                    },
+                    map: (tarea, user) => {
+                        tarea.Usuario = user;
+                        return tarea;
+                    },
+                    splitOn: "usuarioId");
+                await dataBase.CloseAsync();
+                return tarea.FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
         }
         #endregion
     }
