@@ -10,6 +10,5 @@ namespace API_Capacitacion.Data.Interfaces
         public Task<UserModel?> FindOne(int userId);
         public Task<UserModel?> Update(int userId, UpdateUsuarioDto updateUserDto);
         public Task<UserModel?> Remove(int userId);
-
     }
 }

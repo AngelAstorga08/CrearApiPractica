@@ -12,7 +12,7 @@ namespace API_Capacitacion.Model
         public string Tarea { get; set; }
         public string Descripcion { get; set; }
         public bool Completada { get; set; }
-        public UserModel Usuario { get; set; }
+        public UserModel Usuarioo { get; set; }
 
     }
 }

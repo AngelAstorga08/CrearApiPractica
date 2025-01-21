@@ -36,7 +36,7 @@ namespace API_Capacitacion.Data.Services
                     },
 
                     map: (tarea,user) => {
-                        tarea.Usuario = user;
+                        tarea.Usuarioo = user;
                         return tarea;
                         },
                     splitOn: "usuarioId"
@@ -53,14 +53,14 @@ namespace API_Capacitacion.Data.Services
         public async Task<IEnumerable<TareaModel?>> FindAll()
         {
             using NpgsqlConnection dataBase = CreateConnection();
-            string sqlQuery = "SELECT * FROM view_tarea;";
+            string sqlQuery = "SELECT * FROM view_tarea";
             try
             {                  
                 await dataBase.OpenAsync();
                 IEnumerable<TareaModel> listaTarea = await dataBase.QueryAsync<TareaModel, UserModel, TareaModel>(
                     sqlQuery,
                     map: (tarea, user) => {
-                        tarea.Usuario = user;
+                        tarea.Usuarioo = user;
                         return tarea;
                     },
                     splitOn: "usuarioId");
@@ -86,7 +86,7 @@ namespace API_Capacitacion.Data.Services
                     param: new {
                     idTask = userId},
                     map: (tarea, user) => {
-                        tarea.Usuario = user;
+                        tarea.Usuarioo = user;
                         return tarea;
                     },
                     splitOn: "usuarioId");
@@ -118,7 +118,7 @@ namespace API_Capacitacion.Data.Services
                         description = updateTareaDto.Descripcion
                     },
                     map: (tarea, user) => {
-                        tarea.Usuario = user;
+                        tarea.Usuarioo = user;
                         return tarea;
                     },
                     splitOn: "usuarioId"
@@ -146,7 +146,7 @@ namespace API_Capacitacion.Data.Services
                         idTask = userId                       
                     },
                     map: (tarea, user) => {
-                        tarea.Usuario = user;
+                        tarea.Usuarioo = user;
                         return tarea;
                     },
                     splitOn: "usuarioId");
@@ -160,6 +160,37 @@ namespace API_Capacitacion.Data.Services
             }
 
         }
+
+        public async Task<TareaModel?> ChangeStatus(int taskId)
+        {
+            using NpgsqlConnection dataBase = CreateConnection();
+            string sqlQuery = "SELECT * FROM fun_task_togglestatus(p_idTarea := @idTask);";
+            try
+            {
+                await dataBase.OpenAsync();
+                var tarea = await dataBase.QueryAsync<TareaModel, UserModel, TareaModel>(
+                    sqlQuery,
+                    param: new
+                    {
+                        idTask = taskId
+                    },
+                    map: (tarea, user) => {
+                        tarea.Usuarioo = user;
+                        return tarea;
+                    },
+                    splitOn: "usuarioId");
+                await dataBase.CloseAsync();
+                return tarea.FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
+
         #endregion
     }
 }

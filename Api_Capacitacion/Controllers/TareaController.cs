@@ -18,9 +18,10 @@ namespace Api_Capacitacion.Controllers
 
         // GET: api/<TareaController>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> FindAll()
         {
             IEnumerable<TareaModel?> listaTarea = await _service.FindAll();
+            if (listaTarea.Count() == 0) return NotFound(); 
             return Ok(listaTarea);
         }
 
@@ -47,6 +48,14 @@ namespace Api_Capacitacion.Controllers
         public async Task<IActionResult> Put(int id, [FromBody] UpdateTareaDTO updateTareaDTO)
         {
             TareaModel? task = await _service.Update(id, updateTareaDTO);
+            if (task == null) return NotFound();
+            return Ok(task);
+        }
+
+        [HttpPut("Tooglestatus/{TaskId}")]
+        public async Task<IActionResult> ToggleStatus(int TaskId)
+        {
+            TareaModel? task = await _service.ChangeStatus(TaskId);
             if (task == null) return NotFound();
             return Ok(task);
         }
